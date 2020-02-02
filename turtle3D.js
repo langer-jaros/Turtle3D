@@ -3,6 +3,8 @@ var scene = document.getElementById('scene01');
 
 // SUBFUNCTIONS
 function multiplyMatrixs(mA, mB) {
+    console.log('lets go multiply matrix');
+    console.log('mA:',mA,'mB:',mB);
     var result = new Array(mA.length);
     for (let i = 0; i < result.length; i++) {
         result[i] = new Array(mB[i].length)
@@ -116,6 +118,23 @@ function getLenght(originPoint, endPoint) {
     return Math.sqrt((x*x)+(y*y)+(z*z));
 }
 
+function getVectorFromTwoPoints(a,b) {
+    return [a[0]-b[0],a[1]-b[1],a[2]-b[2]];
+}
+
+function getVectorInBase(vector,base){
+    // base 3*3, vector 1*3
+    xn = base[0][0]*vector[0]+base[0][1]*vector[1]+base[0][2]*vector[2];
+    yn = base[1][0]*vector[0]+base[1][1]*vector[1]+base[1][2]*vector[2];
+    zn = base[2][0]*vector[0]+base[2][1]*vector[1]+base[2][2]*vector[2];
+    return [xn,yn,zn];
+}
+
+function getEndPoint(originPoint,vector){
+    //endPoint-OriginPoint = vector
+    return [vector[0]+originPoint[0],vector[1]+originPoint[1],vector[2]+originPoint[2]];
+}
+
 // TURTLE
 const Turtle = function (positions=[0,0,0], rotations=[0,0,0], color='green') {
     [this.X, this.Y, this.Z] = [positions[0], positions[1], positions[2]];
@@ -123,8 +142,15 @@ const Turtle = function (positions=[0,0,0], rotations=[0,0,0], color='green') {
     this.penIsDown = true;
     this.color = color;
 
-    this.rollRight = function (angle) {
+    this.oldBase = getUnitMatrix();
+    this.newBase = getUnitMatrix();
 
+    this.originPoint = [-10,-5,-10];
+    this.endPoint = [0,0,0];
+
+    this.rollRight = function (angle) {
+        this.newBase = multiplyMatrixs(this.oldBase,getRotationZMatrix(angle));
+        console.log('newBase',this.newBase);
     }
 
     this.rollLeft = function (angle) {
@@ -160,19 +186,31 @@ const Turtle = function (positions=[0,0,0], rotations=[0,0,0], color='green') {
 
     };
 
-    this.drawLine = function (x0, y0, z0, x1, y1, z1, turnDeg, len) {
+    this.drawLine = function ([x1, y1, z1], [x0, y0, z0]=[0,0,0], len) {
         console.log([x0, y0, z0], [x1, y1, z1]);
-        middlePoint = getMiddlePoint([x0, y0, z0], [x1, y1, z1]);
-        console.log('middle point',middlePoint);
+        vector = [x1-x0, y1-y0, z1-z0];
+        console.log('vector in unit Base:',vector);
+        //change vector to rotated base
+        vector = getVectorInBase(vector,this.newBase);
+        console.log('vector in Base:',vector);
+
+        //get end point in unit base
+        this.endPoint = getEndPoint(this.originPoint,vector);
+        //console.log('end point:',this.endPoint);
 
 
-        len = getLenght([x0, y0, z0], [x1, y1, z1]);
-        console.log('len',len);
+        console.log('originPoint:',this.originPoint, 'endPoint:',this.endPoint);
+        middlePoint = getMiddlePoint(this.originPoint, this.endPoint);
+        //console.log('middle point',middlePoint);
+
+
+        len = getLenght(this.originPoint,this.endPoint);
+        //console.log('len',len);
 
         //z-roration
-        rotY = Math.atan((x1 - x0) / (z1 - z0));
-        rotZ = Math.asin((y1 - y0) / len);
-        console.log(rotY, rotZ);
+        rotY = Math.atan((this.endPoint[0] - this.originPoint[0]) / (this.endPoint[2] - this.originPoint[2]));
+        rotZ = Math.asin((this.endPoint[1] - this.originPoint[1]) / len);
+        //console.log(rotY, rotZ);
 
         rotZ =  180*rotZ/Math.PI;
         rotY =  180*rotY/Math.PI;
@@ -196,6 +234,9 @@ const Turtle = function (positions=[0,0,0], rotations=[0,0,0], color='green') {
         el.setAttribute('rotation', rotation);
         el.setAttribute('shadow');
         scene.appendChild(el);
+
+        this.oldBase = this.newBase;
+        this.originPoint = this.endPoint;
     }
 
     this.forward = function (length) {
@@ -203,7 +244,7 @@ const Turtle = function (positions=[0,0,0], rotations=[0,0,0], color='green') {
         newX = this.X + length * Math.cos(this.turnRad);
         newY = this.Y + length * Math.sin(this.turnRad);
         newZ = 0;
-        this.drawLine(this.X, this.Y, this.Z, newX, newY, newZ, this.turnDeg, length);
+        this.drawLine(newX, newY, newZ, this.X, this.Y, this.Z, length);
         [this.X, this.Y, this.Z] = [newX, newY, newZ];
     };
 }
@@ -285,4 +326,6 @@ for (i = 0; i < gens; i++) {
 */
 
 var STEP = 2;
-t.drawLine(-5,-5,-5, 5, 5, 0, 0, 0);
+t.drawLine([1,0,0]);
+t.rollRight(45);
+t.drawLine([1,5,2]);
