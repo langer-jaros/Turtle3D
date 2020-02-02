@@ -1,5 +1,5 @@
 /*
-VERZE 0.2.3 J.L.
+VERZE 0.3.1 J.L.
 */
 
 // A-FRAME
@@ -7,11 +7,9 @@ var scene = document.getElementById('scene01');
 
 // SUBFUNCTIONS
 /*
-NETESTOVÁNO V0.2.3 J.L.
+ZMĚNA V0.3 J.L.
 */
 function multiplyMatrixs(mA, mB) {
-    console.log('lets go multiply matrix');
-    console.log('mA:',mA,'mB:',mB);
     var result = new Array(mA.length);
     for (let i = 0; i < result.length; i++) {
         result[i] = new Array(mB[i].length)
@@ -83,12 +81,12 @@ function matrix_invert(M) {
 
 /*
 NAJDE STŘEDNÍ BOD.
-FUNGUJE DOBŘE V0.2.3 J.L.
+FUNGUJE DOBŘE, ZMĚNA V0.3 J.L.
 */
-       function getMiddlePoint(originPoint, endPoint) {
-    x = originPoint[0] + (endPoint[0] - originPoint[0]) / 2;
-    y = originPoint[1] + (endPoint[1] - originPoint[1]) / 2;
-    z = originPoint[2] + (endPoint[2] - originPoint[2]) / 2;
+function getMiddlePoint(originPoint, endPoint) {
+    x = originPoint[0] + ((endPoint[0] - originPoint[0]) / 2);
+    y = originPoint[1] + ((endPoint[1] - originPoint[1]) / 2);
+    z = originPoint[2] + ((endPoint[2] - originPoint[2]) / 2);
 
     return [x, y, z];
 }
@@ -138,17 +136,11 @@ function getUnitMatrix() {
 }
 
 /*
-NEFUNGUJE, 
-OPRAVENÁ FUNKCE GETVECLEN O KUS NÍŽ V0.2.3 J.L.
+NETESTOVÁNO V0.3 J.L.
 */
-/*
-function getLenght(originPoint, endPoint) {
-    x = originPoint[0] + (endPoint[0] - originPoint[0])
-    y = originPoint[1] + (endPoint[1] - originPoint[1])
-    z = originPoint[2] + (endPoint[2] - originPoint[2])
-    return Math.sqrt((x*x)+(y*y)+(z*z));
+function getLenght(vector) {
+    return Math.sqrt((vector[0] * vector[0]) + (vector[1] * vector[1]) + (vector[2] * vector[2]));
 }
-*/
 
 /*
 SPOČÍTÁ DÉLKU DANÉHO VEKTORU V0.2.3 J.L.
@@ -166,29 +158,38 @@ function getVecLen(startPoint, endPoint) {
 }
 
 /*
-NETESTOVÁNO V0.2.3 J.L.
+ZMĚNA V0.3 J.L.
 */
-function getVectorFromTwoPoints(a,b) {
-    return [a[0]-b[0],a[1]-b[1],a[2]-b[2]];
+function getVectorFromTwoPoints(a, b) {
+    return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
 }
 
 /*
-NETESTOVÁNO V0.2.3 J.L.
+ZMĚNA V0.3 J.L.
 */
-function getVectorInBase(vector,base){
+function getVectorInBase(vector, base) {
     // base 3*3, vector 1*3
-    xn = base[0][0]*vector[0]+base[0][1]*vector[1]+base[0][2]*vector[2];
-    yn = base[1][0]*vector[0]+base[1][1]*vector[1]+base[1][2]*vector[2];
-    zn = base[2][0]*vector[0]+base[2][1]*vector[1]+base[2][2]*vector[2];
-    return [xn,yn,zn];
+    xn = base[0][0] * vector[0] + base[0][1] * vector[1] + base[0][2] * vector[2];
+    yn = base[1][0] * vector[0] + base[1][1] * vector[1] + base[1][2] * vector[2];
+    zn = base[2][0] * vector[0] + base[2][1] * vector[1] + base[2][2] * vector[2];
+    return [xn, yn, zn];
 }
 
 /*
-NETESTOVÁNO V0.2.3 J.L.
+ZMĚNA V0.3 J.L.
 */
-function getEndPoint(originPoint,vector){
+function getEndPoint(originPoint, vector) {
     //endPoint-OriginPoint = vector
-    return [vector[0]+originPoint[0],vector[1]+originPoint[1],vector[2]+originPoint[2]];
+    return [vector[0] + originPoint[0], vector[1] + originPoint[1], vector[2] + originPoint[2]];
+}
+
+/*
+NETESTOVÁNO V0.3 J.L.
+*/
+function modifyLenghtOfVector(vector, length) {
+    //u = (lenght/|vector|)*vector
+    len = length / getLenght(vector);
+    return [len * vector[0], len * vector[1], len * vector[2]];
 }
 
 // TURTLE
@@ -204,43 +205,60 @@ const Turtle = function (positions=[0,0,0], rotations=[0,0,0], color='green') {
     this.oldBase = getUnitMatrix();
     this.newBase = getUnitMatrix();
 
-    this.originPoint = [-10,-5,-10];
-    this.endPoint = [0,0,0];
+    this.originPoint = [-2, 0, -2];
+    this.endPoint = [0, 0, 0];
+
+    this.vector = [0, 1, 0];
 
     this.rollRight = function (angle) {
-        this.newBase = multiplyMatrixs(this.oldBase,getRotationZMatrix(angle));
-        console.log('newBase',this.newBase);
-    }
+        angle = Math.PI * angle / 180;
+        this.newBase = multiplyMatrixs(this.oldBase, getRotationYMatrix(angle));
+        console.log('oldBase:', this.oldBase, 'newBase:', this.newBase);
+    };
 
     this.rollLeft = function (angle) {
-
-    }
+        angle = 2 * Math.PI - (Math.PI * angle / 180);
+        this.newBase = multiplyMatrixs(this.oldBase, getRotationYMatrix(angle));
+        console.log('oldBase:', this.oldBase, 'newBase:', this.newBase);
+    };
 
     this.turnRight = function (angle) {
-
-    }
+        angle = Math.PI * angle / 180;
+        this.newBase = multiplyMatrixs(this.oldBase, getRotationXMatrix(angle));
+        console.log('oldBase:', this.oldBase, 'newBase:', this.newBase);
+    };
 
     this.turnLeft = function (angle) {
-
-    }
+        angle = 2 * Math.PI - (Math.PI * angle / 180);
+        this.newBase = multiplyMatrixs(this.oldBase, getRotationXMatrix(-angle));
+        console.log('oldBase:', this.oldBase, 'newBase:', this.newBase);
+    };
 
     this.up = function (angle) {
-
-    }
+        angle = Math.PI * angle / 180;
+        this.newBase = multiplyMatrixs(this.oldBase, getRotationZMatrix(angle));
+        console.log('oldBase:', this.oldBase, 'newBase:', this.newBase);
+    };
 
     this.down = function (angle) {
+        angle = 2 * Math.PI - (Math.PI * angle / 180);
+        this.newBase = multiplyMatrixs(this.oldBase, getRotationZMatrix(-angle));
+        console.log('oldBase:', this.oldBase, 'newBase:', this.newBase);
+    };
 
-    }
-
-    this.penup = function(){
+    this.penup = function () {
         this.penIsDown = false;
     };
-    this.pendown = function(){
+
+    this.pendown = function () {
         this.penIsDown = true;
     };
+
     this.setPosition = function(x, y, z){
-        [this.X, this.Y, this.Z] = [x, y, z];
+        //[this.X, this.Y, this.Z] = [x, y, z];
+        this.originPoint = [x, y, z];
     };
+
     this.setOrientation = function(orientation){
 
     };
@@ -248,7 +266,7 @@ const Turtle = function (positions=[0,0,0], rotations=[0,0,0], color='green') {
     /*
     Z BODŮ NAJDE STŘEDY, ÚHLY A DÉLKU, ZAVOLÁ DRAWCYLINDER J.L.
     */
-   this.drawLine = function (startPos, endPos) {
+   this.drawLine = function (endPos, startPos=[0,0,0]) {
         //this.drawLine = function ([x1, y1, z1], [x0, y0, z0]=[0,0,0], len) {
         console.log('startPos', startPos);
         x0 = startPos[0];
@@ -267,6 +285,7 @@ const Turtle = function (positions=[0,0,0], rotations=[0,0,0], color='green') {
         console.log('[x1, y1, z1]', [x1, y1, z1]);
 
         vector = [x1-x0, y1-y0, z1-z0];
+        this.endPoint = getEndPoint(this.originPoint, vector);
         console.log('vector in unit Base:',vector);
         //change vector to rotated base
         vector = getVectorInBase(vector,this.newBase);
@@ -339,9 +358,18 @@ const Turtle = function (positions=[0,0,0], rotations=[0,0,0], color='green') {
 
         console.log(rotY, rotZ);
         //turnDeg = turnDeg - 90; // rotation around z axis 0 means 90 turnDegrees in math
+        
+        let el = document.createElement('a-entity');
 
-        this.oldBase = this.newBase;
+        start = this.originPoint[0] + ' ' + this.originPoint[1] + ' ' + this.originPoint[2];
+        end = this.endPoint[0] + ' ' + this.endPoint[1] + ' ' + this.endPoint[2];
+        color = '#000000';
+        el.setAttribute('line', 'start:' + start + ';end:' + end + ';color:' + color);
+
+        scene.appendChild(el);
+        
         this.originPoint = this.endPoint;
+        this.oldBase = this.newBase;
     };
 
     /*
@@ -356,7 +384,9 @@ const Turtle = function (positions=[0,0,0], rotations=[0,0,0], color='green') {
         el.setAttribute('position', position);
         el.setAttribute('height', len);
         
-        rad = len / 10; // radius is 1/20 of length
+        //rad = len / 10; // radius is 1/20 of length
+        rad = 10;
+
         el.setAttribute('radius', rad);
         el.setAttribute('color', this.color);
         
@@ -369,15 +399,21 @@ const Turtle = function (positions=[0,0,0], rotations=[0,0,0], color='green') {
 
     this.forward = function (length) {
         //console.log(length, this.turnRad);
-        newX = this.X + length * Math.cos(this.turnRad);
+        /*newX = this.X + length * Math.cos(this.turnRad);
         newY = this.Y + length * Math.sin(this.turnRad);
         newZ = 0;
         this.drawLine(newX, newY, newZ, this.X, this.Y, this.Z, length);
-        [this.X, this.Y, this.Z] = [newX, newY, newZ];
+        [this.X, this.Y, this.Z] = [newX, newY, newZ];*/
+        if (this.penIsDown) {
+            var vectorInBase = getVectorInBase(this.vector, this.newBase);
+            this.drawLine(modifyLenghtOfVector(vectorInBase, length));
+        }
+
     };
 }
 
 // PLANT
+/*
 var viewPlant = function(s, step, angle){
     var len = s.length;
     this.stack = [];
@@ -410,7 +446,8 @@ var viewPlant = function(s, step, angle){
         }
     }
 }
-
+*/
+/*
 var plant = function(ch){
     switch(ch) {
     case 'X':
@@ -421,7 +458,8 @@ var plant = function(ch){
         return ch;
     }
 }
-
+*/
+/*
 var getNextGen = function(sP){
     var sN = '';
     var len = sP.length;
@@ -430,15 +468,41 @@ var getNextGen = function(sP){
     }
     return sN;
 }
-
+*/
 // MAIN
+/*
+* TODO : zmenit cary na cylindery
+*        porad nefunguje tak jak by melo, zrejme chyba prace s bázemi
+*        otestovat
+*        nedari se mi oddelit turn left/right, up/down, rollright/rollleft, dvojice delaji totez
+*/
+var t = new Turtle();
+var STEP = 1;
+t.forward(STEP);
+t.turnRight(90);
+t.forward(STEP);
+t.turnRight(90);
+t.forward(STEP);
+// POMOCNÉ DEBUGGOVACÍ OBRAZCE, NA KTERÝCH JE DOBŘE VIDĚT JAK SETO CHOVÁ
+//t.drawCylineder([0,0,-10], [0,0,0], 5)
+//t.drawCylineder([0,0,-10], [30,0,0], 5)
+//t.drawLine([0,0,-10], [10,-5,-20]);
+//t.drawLine([0,0,-10], [-10,20,-25]);
+//t.drawLine([0,0,-10], [-10,-10,-5]);
+
+/*
+t.drawLine([1,0,0]);
+t.rollRight(45);
+t.drawLine([1,5,2]);
+*/
+
 /*
 const step_length = 0.03;
 const turn_angle = 25;
 const start_angle = 90;
 const color = 'darkgreen'
 */
-var t = new Turtle();
+
 /*
 var s = 'X';
 var gens = 6;
@@ -453,15 +517,5 @@ for (i = 0; i < gens; i++) {
 }
 */
 
-var STEP = 2;
-/*
-t.drawLine([1,0,0]);
-t.rollRight(45);
-t.drawLine([1,5,2]);
-*/
-// POMOCNÉ DEBUGGOVACÍ OBRAZCE, NA KTERÝCH JE DOBŘE VIDĚT JAK SETO CHOVÁ
-//t.drawCylineder([0,0,-10], [0,0,0], 5)
-//t.drawCylineder([0,0,-10], [30,0,0], 5)
-//t.drawLine([0,0,-10], [10,-5,-20]);
-//t.drawLine([0,0,-10], [-10,20,-25]);
-t.drawLine([0,0,-10], [-10,-10,-5]);
+
+
