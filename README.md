@@ -10,6 +10,8 @@ The code is devided into HTML and JavaScript parts.
 
 ## Versions log
 
++ v0.2.1 - turtle3D.js updated with domka_3dturtle_v0.2.html
+
 + v0.2 - domka_3dturtle_v0.2.html
 
 + v0.1.1 - 3DTurtle0.1.html devided into turtle3D.html & turtle3D.js
