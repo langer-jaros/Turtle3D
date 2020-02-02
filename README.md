@@ -10,7 +10,7 @@ The code is devided into HTML and JavaScript parts.
 
 ## Versions log
 
-+ v0.3.1 - turtle3D.js & turtle3D.html updated with turtle3d_aframe_v03_jl.html
++ v0.3.1 - turtle3D.js & turtle3D.html updated with domka_3dtutrle_v0.3.html
 
 + v0.3 - domka_3dtutrle_v0.3.html
 
