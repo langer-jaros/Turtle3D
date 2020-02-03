@@ -1,5 +1,5 @@
 /*
-VERZE 0.3.4 J.L.
+VERZE 0.4.0 J.L.
 */
 
 // A-FRAME
@@ -20,7 +20,7 @@ function multiplyMatrixs(mA, mB) {
 /*
 FUNGUJE D.D.
 */
-function matrix_invert(M) {
+function matrixInvert(M) {
     return math.inv(M);
 }
 
@@ -307,7 +307,7 @@ const Turtle = function (positions=[0, 0, 0], rotations=[0, 0, 0], color='green'
         ZAKOMENTOVÁNO, LOGIKA OKOLU UKLÁDÁNÍ, TRANSFORMACE JSEM NEZKOUMAL, TO BE DONE J.L.
         */
 
-        len = getLenght(this.originPoint, this.endPoint);
+        len = getVecLen(this.originPoint, this.endPoint);
         //console.log('len',len);
 
         //z-roration
@@ -361,7 +361,7 @@ const Turtle = function (positions=[0, 0, 0], rotations=[0, 0, 0], color='green'
 
     this.forward = function (length) {
         vector = [0, length, 0];
-        transpM = getTranspMat(this.transforM);
+        transpM = matrixInvert(this.transforM);
 
         rotVector = multiplyMatrixs(transpM, vector);
         rotVector = [0, length, 0]
