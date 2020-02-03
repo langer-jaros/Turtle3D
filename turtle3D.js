@@ -1,5 +1,5 @@
 /*
-VERZE 0.3.3 J.L.
+VERZE 0.3.4 J.L.
 */
 
 // A-FRAME
@@ -142,8 +142,8 @@ const Vector = function (arr) {
     this.y = arr[1];
     this.z = arr[2];
     
-    this.getArray = function(){
-        return [this.x,this.y,this.z];
+    this.getArray = function () {
+        return [this.x, this.y, this.z];
     }
 };
 
@@ -369,7 +369,8 @@ const Turtle = function (positions=[0, 0, 0], rotations=[0, 0, 0], color='green'
 
         console.log(arrFromVec(this.pos));
 
-        newPos = this.pos.getArray() + rotVector;
+        newPos = addMatrices(this.pos.getArray(), rotVector);
+        //newPos = this.pos.getArray() + rotVector;
         console.log('newPos', newPos);
 
         if (this.penIsDown) {
@@ -500,6 +501,118 @@ for (i = 0; i < gens; i++) {
     }
 }
 */
+/**
+* + Turn left by angle α, using rotation matrix RU(α).
+* − Turn right by angle α, using rotation matrix RU(−α).
+* & Pitch down by angle α, using rotation matrix RL(α).
+* ^ Pitch up by angle α, using rotation matrix RL(−α).
+* \ Roll left by angle α, using rotation matrix RH(α).
+* / Roll right by angle α, using rotation matrix RH(−α).
+* | Turn around, using rotation matrix RU(180◦).
+* 
+* R = right, L = left
+* U = Y axis
+* L = X axis
+* H = Z axis
+* 
+ 
+const r2 = 0.7;
+const a1 = 10;
+const a2 = 60;
+const d = 137.5;
+const wr = 0.707;
+*/
 
 
+/**
+ * NETESTOVANO D.D
+ */
+const r1 = 0.9;
 
+function getPlant1Prescription(originStr, generation) {
+    var oldStr = originStr;
+    var newStr = '';
+    console.log('len of origin string', oldStr.length);
+    while (generation > 0) {
+        for (let i = 0; i < oldStr.length; i++) {
+            switch (oldStr[i]) {
+                case 'F':
+                    newStr += 'Y[++++++MF][-----NF][^^^^^OF][&&&&&PF]';
+                    break;
+                case 'M':
+                    newStr += 'Z-M';
+                    break;
+                case 'N':
+                    newStr += 'Z+N';
+                    break;
+                case 'O':
+                    newStr += 'Z&O';
+                    break;
+                case 'P':
+                    newStr += 'Z^P';
+                    break;
+                case 'Y':
+                    newStr += 'Z-ZY+';
+                    break;
+                case 'Z':
+                    newStr += 'ZZ';
+                    break;
+                default:
+                    break;
+            }
+        }
+        oldStr = newStr;
+        generation--;
+    }
+    return newStr;
+}
+
+function drawPlant(str, angle) {
+    var stack = [];
+    for (let i = 0; i < str.length; i++) {
+        switch (str[i]) {
+            case 'F':
+                t.forward(r1);
+                break;
+            case '+':
+                t.turnRight(angle);
+                break;
+            case '−':
+                t.turnLeft(angle);
+                break;
+            case '&':
+                t.pitchUp(angle);
+                break;
+            case '^':
+                t.pitchDown(angle);
+                break;
+            case '\\':
+                t.rollRight(angle);
+                break;
+            case '/':
+                t.rollLeft(angle);
+                break;
+            case '|':
+                t.turnLeft(180);
+                break;
+            case '[':
+                stack.push([[t.X, t.Y], t.heading])
+                break;
+            case ']':
+                [p, h] = stack.pop();
+                t.penup();
+                t.setposition(p[0], p[1]);
+                t.setheading(h);
+                t.pendown();
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+//main
+var plantStr = '';
+plantStr = getPlant1Prescription('F', 2);
+console.log('plant1 string:', plantStr);
+//drawPlant(plantStr,45);
