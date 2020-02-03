@@ -421,6 +421,8 @@ const Turtle = function (positions = [0, 0, 0], rotations = [0, 0, 0], color = '
 
     this.forward = function (length) {
         vector = [0, length, 0];
+        
+        
         rotVector = multiplyMatrixs(this.transpM, vector);
         rotVector = [0, length, 0]
         console.log('rotVector', rotVector);

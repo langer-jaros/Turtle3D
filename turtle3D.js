@@ -1,5 +1,5 @@
 /*
-VERZE 0.3.2 J.L.
+VERZE 0.3.3 J.L.
 */
 
 // A-FRAME
@@ -10,21 +10,19 @@ function addMatrices(mA, mB) {
     return math.add(mA, mB);
 }
 
-
-
 /*
 FUNGUJE D.D
 */
 function multiplyMatrixs(mA, mB) {
     return math.multiply(mA, mB);
-};
+}
 
 /*
 FUNGUJE D.D.
 */
 function matrix_invert(M) {
     return math.inv(M);
-};
+}
 
 /*
 NAJDE STŘEDNÍ BOD.
@@ -34,59 +32,51 @@ function getMiddlePoint(originPoint, endPoint) {
     x = originPoint[0] + ((endPoint[0] - originPoint[0]) / 2);
     y = originPoint[1] + ((endPoint[1] - originPoint[1]) / 2);
     z = originPoint[2] + ((endPoint[2] - originPoint[2]) / 2);
-
     return [x, y, z];
 }
 
 /*
-NETESTOVÁNO V0.2.3 J.L.
+PŘEDDEFINOVÁNO
 */
 function getRotationXMatrix(angle) {
-    return [
+    return math.matrix([
         [1, 0, 0],
         [0, Math.cos(angle), -Math.sin(angle)],
         [0, -Math.sin(angle), Math.cos(angle)]
-    ];
+    ]).valueOf();
 }
 
 /*
-NETESTOVÁNO V0.2.3 J.L.
+PŘEDDEFINOVÁNO
 */
 function getRotationYMatrix(angle) {
-    return [
+    return math.matrix([
         [Math.cos(angle), 0, Math.sin(angle)],
         [0, 1, 0],
         [-Math.sin(angle), 0, Math.cos(angle)]
-    ];
+    ]).valueOf();
 }
 
 /*
-NETESTOVÁNO V0.2.3 J.L.
+PŘEDDEFINOVÁNO
 */
 function getRotationZMatrix(angle) {
-    return [
+    return math.matrix([
         [Math.cos(angle), -Math.sin(angle), 0],
         [Math.sin(angle), Math.cos(angle), 0],
         [0, 0, 1]
-    ];
+    ]).valueOf();
 }
 
 /*
-NETESTOVÁNO V0.2.3 J.L.
+FUNGUJE
 */
 function getUnitMatrix() {
-    return [
+    return math.matrix([
         [1, 0, 0],
         [0, 1, 0],
         [0, 0, 1]
-    ];
-}
-
-/*
-NETESTOVÁNO V0.3 J.L.
-*/
-function getLenght(vector) {
-    return Math.sqrt((vector[0] * vector[0]) + (vector[1] * vector[1]) + (vector[2] * vector[2]));
+    ]).valueOf();
 }
 
 /*
@@ -101,29 +91,33 @@ function getVecLen(startPoint, endPoint) {
     y1 = endPoint[1];
     z1 = endPoint[2];
     ///            console.log('x1, y1, z1', x1, y1, z1);
-    return Math.sqrt((x1-x0)**2+(y1-y0)**2+(z1-z0)**2);
+    return Math.sqrt((x1 - x0)**2 + (y1 - y0)**2 + (z1 - z0)**2);
 }
 
 /*
-ZMĚNA V0.3 J.L.
+FUNGUJE D.D.
 */
 function getVectorFromTwoPoints(a, b) {
-    return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+    //bod A,B, vector V = AB->:
+    // B-A = V
+    return [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
 }
 
 /*
-ZMĚNA V0.3 J.L.
+FUNGUJE D.D.
 */
 function getVectorInBase(vector, base) {
     // base 3*3, vector 1*3
-    xn = base[0][0] * vector[0] + base[0][1] * vector[1] + base[0][2] * vector[2];
-    yn = base[1][0] * vector[0] + base[1][1] * vector[1] + base[1][2] * vector[2];
-    zn = base[2][0] * vector[0] + base[2][1] * vector[1] + base[2][2] * vector[2];
-    return [xn, yn, zn];
+    //nasobeni vectoru
+    return multiplyMatrixs(vector, base);
+    /*xn = base[0][0]*vector[0]+base[0][1]*vector[1]+base[0][2]*vector[2];
+    yn = base[1][0]*vector[0]+base[1][1]*vector[1]+base[1][2]*vector[2];
+    zn = base[2][0]*vector[0]+base[2][1]*vector[1]+base[2][2]*vector[2];
+    return [xn,yn,zn];*/
 }
 
 /*
-ZMĚNA V0.3 J.L.
+FUNGUJE D.D.
 */
 function getEndPoint(originPoint, vector) {
     //endPoint-OriginPoint = vector
@@ -139,24 +133,28 @@ function modifyLenghtOfVector(vector, length) {
     return [len * vector[0], len * vector[1], len * vector[2]];
 };
 
-function arrFromVec(vec){
+function arrFromVec(vec) {
     return [vec.x, vec.y, vec.z];
 }
 
-const Vector = function(arr){
+const Vector = function (arr) {
     this.x = arr[0];
     this.y = arr[1];
     this.z = arr[2];
+    
+    this.getArray = function(){
+        return [this.x,this.y,this.z];
+    }
 };
 
 // TURTLE
 /*
 NETESTOVÁNO V0.2.3 J.L.
 */
-const Turtle = function (positions=[0,0,0], rotations=[0,0,0], color='green') {
+const Turtle = function (positions=[0, 0, 0], rotations=[0, 0, 0], color='green') {
     this.pos = new Vector(positions);
     this.rot = new Vector(rotations);
-    console.log('arrFromVec(this.rot)',arrFromVec(this.rot));
+    console.log('arrFromVec(this.rot)', arrFromVec(this.rot));
     ////console.log('this.pos.x, this.pos.y, this.pos.z', this.pos.x, this.pos.y, this.pos.z);
     //// console.log('this.pos', this.pos);    
     this.penIsDown = true;
@@ -217,13 +215,13 @@ const Turtle = function (positions=[0,0,0], rotations=[0,0,0], color='green') {
         this.penIsDown = true;
     };
 
-    this.setPosition = function(x, y, z){
+    this.setPosition = function (x, y, z) {
         [this.pos.x, this.pos.y, this.pos.z] = [x, y, z];
-        console.log('arrFromVec(this.pos)',arrFromVec(this.pos));
+        console.log('arrFromVec(this.pos)', arrFromVec(this.pos));
         this.originPoint = [x, y, z];
     };
 
-    this.setOrientation = function(orientation){
+    this.setOrientation = function (orientation) {
 
     };
 
@@ -236,27 +234,27 @@ const Turtle = function (positions=[0,0,0], rotations=[0,0,0], color='green') {
         x0 = startPos[0];
         y0 = startPos[1];
         z0 = startPos[2];
-        console.log('x0,y0,z0',x0,y0,z0);
-        [x0, y0, z0] = [startPos[0],startPos[1],startPos[2]];
+        console.log('x0, y0, z0', x0, y0, z0);
+        [x0, y0, z0] = [startPos[0], startPos[1], startPos[2]];
         console.log('[x0, y0, z0]', [x0, y0, z0]);
 
         console.log('endPos', endPos);
         x1 = endPos[0];
         y1 = endPos[1];
         z1 = endPos[2];
-        console.log('x1, y1, z1:',x1, y1, z1);
+        console.log('x1, y1, z1:', x1, y1, z1);
         [x1, y1, z1] = [endPos[0], endPos[1], endPos[2]];
         console.log('[x1, y1, z1]', [x1, y1, z1]);
 
-        vector = [x1-x0, y1-y0, z1-z0];
+        vector = [x1 - x0, y1 - y0, z1 - z0];
         this.endPoint = getEndPoint(this.originPoint, vector);
         ///         console.log('vector in unit Base:',vector);
         //change vector to rotated base
-        vector = getVectorInBase(vector,this.newBase);
+        vector = getVectorInBase(vector, this.newBase);
         ///        console.log('vector in Base:',vector);
 
         //get end point in unit base
-        this.endPoint = getEndPoint(this.originPoint,vector);
+        this.endPoint = getEndPoint(this.originPoint, vector);
         //console.log('end point:',this.endPoint);
 
 
@@ -292,24 +290,24 @@ const Turtle = function (positions=[0,0,0], rotations=[0,0,0], color='green') {
         ///          console.log('dY/vectorLen:',dY/vectorLen);
         ///         console.log('Math.acos(dY/vectorLen):',Math.acos(dY/vectorLen));
         ///         console.log('Math.acos(dY/vectorLen)/Math.PI*180:',Math.acos(dY/vectorLen)/Math.PI*180);
-        rotX = Math.acos(dY/vectorLen)/Math.PI*180;
+        rotX = Math.acos(dY / vectorLen) / Math.PI * 180;
         ///          console.log('rotX', rotX);
 
         // SPOČÍTÁ ROTACI V OSE Y, PODLE KVADRANTU BUĎ NECHÁ, NEBO ODEČTE OD 360 STUPŇŮ
         ///          console.log('dZ/Math.sqrt(dX**2+dZ**2)',dZ/Math.sqrt(dX**2+dZ**2));
         ///           console.log('Math.acos(dZ/Math.sqrt(dX**2+dZ**2))/Math.PI*180:',Math.acos(dZ/Math.sqrt(dX**2+dZ**2))/Math.PI*180);
-        rotY180 = Math.acos(dZ/Math.sqrt(dX**2+dZ**2))/Math.PI*180;
+        rotY180 = Math.acos(dZ / Math.sqrt(dX**2 + dZ**2)) / Math.PI * 180;
         ///           console.log('rotY180', rotY180);
         //console.log("test of tanges", Math.tan(dX/dZ)/Math.PI*180)
         rotY = (dX > 0)? rotY180: 360 - rotY180;
         ///           console.log('rotY', rotY);
-        this.drawCylineder(centerPos, [rotX,rotY,0], 15);
+        this.drawCylineder(centerPos, [rotX, rotY, 0], 15);
 
         /*
         ZAKOMENTOVÁNO, LOGIKA OKOLU UKLÁDÁNÍ, TRANSFORMACE JSEM NEZKOUMAL, TO BE DONE J.L.
         */
 
-        len = getLenght(this.originPoint,this.endPoint);
+        len = getLenght(this.originPoint, this.endPoint);
         //console.log('len',len);
 
         //z-roration
@@ -317,8 +315,8 @@ const Turtle = function (positions=[0,0,0], rotations=[0,0,0], color='green') {
         rotZ = Math.asin((this.endPoint[1] - this.originPoint[1]) / len);
         //console.log(rotY, rotZ);
 
-        rotZ =  180*rotZ/Math.PI;
-        rotY =  180*rotY/Math.PI;
+        rotZ = 180 * rotZ / Math.PI;
+        rotY = 180 * rotY / Math.PI;
 
         console.log(rotY, rotZ);
         //turnDeg = turnDeg - 90; // rotation around z axis 0 means 90 turnDegrees in math
@@ -343,7 +341,7 @@ const Turtle = function (positions=[0,0,0], rotations=[0,0,0], color='green') {
         let el = document.createElement('a-cylinder');
         
         //zPos = -3; // z position
-        var position = '' + centerPos[0] + ' ' + centerPos[1] + ' ' + centerPos[2];
+        var position = ''+centerPos[0]+' '+centerPos[1]+' '+centerPos[2];
         ///           console.log('position', position);
         el.setAttribute('position', position);
         el.setAttribute('height', len);
@@ -354,7 +352,7 @@ const Turtle = function (positions=[0,0,0], rotations=[0,0,0], color='green') {
         el.setAttribute('radius', rad);
         el.setAttribute('color', this.color);
         
-        var rotation = '' + rotations[0] + ' ' + rotations[1] + ' ' + (rotations[2]+360)%360;
+        var rotation = ''+rotations[0]+' '+rotations[1]+' '+((rotations[2] + 360) % 360);
         ///        console.log('rotation', rotation);
         el.setAttribute('rotation', rotation);
         el.setAttribute('shadow');
@@ -453,7 +451,7 @@ var getNextGen = function(sP){
 */
 //var t = new Turtle();
 var STEP = 1;
-var t = new Turtle([0,3,-10],[0,0,0]);
+var t = new Turtle([0, 3, -10], [0, 0, 0]);
 //t.drawLine([-10,-10,-5]);
 t.forward(STEP);
 

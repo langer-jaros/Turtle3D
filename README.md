@@ -10,6 +10,8 @@ The code is devided into HTML and JavaScript parts.
 
 ## Versions log
 
++ v0.3.3 - turtle3D.js updated with turtle3Dv01
+
 + v0.3.2 - subversion, pushed in order not having divergent branches
 
 + v0.3.1 - turtle3D.js & turtle3D.html updated with domka_3dtutrle_v0.3.html
