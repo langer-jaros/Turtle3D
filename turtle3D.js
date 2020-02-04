@@ -1,5 +1,5 @@
 /*
-VERZE 0.4.1 J.L.
+VERZE 0.4.2 J.L.
 */
 
 // A-FRAME
@@ -13,7 +13,7 @@ function addMatrices(mA, mB) {
 /*
 FUNGUJE D.D
 */
-function multiplyMatrixs(mA, mB) {
+function multiplyMatrices(mA, mB) {
     return math.multiply(mA, mB);
 }
 
@@ -42,7 +42,7 @@ function getRotationXMatrix(angle) {
     return math.matrix([
         [1, 0, 0],
         [0, Math.cos(angle), -Math.sin(angle)],
-        [0, -Math.sin(angle), Math.cos(angle)]
+        [0, Math.sin(angle), Math.cos(angle)]
     ]).valueOf();
 }
 
@@ -105,7 +105,7 @@ FUNGUJE D.D.
 function getVectorInBase(vector, base) {
     // base 3*3, vector 1*3
     //nasobeni vectoru
-    return multiplyMatrixs(vector, base);
+    return multiplyMatrices(vector, base);
     /*xn = base[0][0]*vector[0]+base[0][1]*vector[1]+base[0][2]*vector[2];
     yn = base[1][0]*vector[0]+base[1][1]*vector[1]+base[1][2]*vector[2];
     zn = base[2][0]*vector[0]+base[2][1]*vector[1]+base[2][2]*vector[2];
@@ -129,6 +129,10 @@ function modifyLenghtOfVector(vector, length) {
     return [len * vector[0], len * vector[1], len * vector[2]];
 };
 
+function degToRad(deg) {
+    return  deg / 180 * Math.PI
+}
+
 function arrFromVec(vec) {
     return [vec.x, vec.y, vec.z];
 }
@@ -149,15 +153,19 @@ NETESTOVÁNO V0.2.3 J.L.
 */
 const Turtle = function (positions=[0, 0, 0], rotations=[0, 0, 0], color='green') {
     this.pos = new Vector(positions);
-    this.rot = new Vector(rotations);
-    console.log('arrFromVec(this.rot)', arrFromVec(this.rot));
+    [rotX, rotY, rotZ] = rotations;
+    //////////////////console.log('arrFromVec(this.rot)', arrFromVec(this.rot));
     ////console.log('this.pos.x, this.pos.y, this.pos.z', this.pos.x, this.pos.y, this.pos.z);
     //// console.log('this.pos', this.pos);    
     this.penIsDown = true;
     this.color = color;
     
     this.transofrmationM = getUnitMatrix();
-    this.transposeM = getUnitMatrix();
+    this.transofrmationM = multiplyMatrices(getRotationXMatrix(degToRad(rotX)), this.transofrmationM);
+    this.transofrmationM = multiplyMatrices(getRotationYMatrix(degToRad(rotY)), this.transofrmationM);
+    this.transofrmationM = multiplyMatrices(getRotationZMatrix(degToRad(rotZ)), this.transofrmationM);
+    console.log('this.transofrmationM', this.transofrmationM);
+    this.inverseM = matrixInvert(this.transofrmationM);
 
     this.oldBase = getUnitMatrix();
     this.newBase = getUnitMatrix();
@@ -168,38 +176,68 @@ const Turtle = function (positions=[0, 0, 0], rotations=[0, 0, 0], color='green'
     this.vector = [0, 1, 0];
 
     this.rollRight = function (angle) {
-        angle = Math.PI * angle / 180;
-        this.newBase = multiplyMatrixs(this.oldBase, getRotationYMatrix(angle));
+        rad = - angle / 180 * Math.PI;
+        console.log('angle, rad', angle, rad);
+        console.log('this.transofrmationM', this.transofrmationM);
+        this.transofrmationM = multiplyMatrices(getRotationYMatrix(rad), this.transofrmationM);
+        console.log('this.transofrmationM', this.transofrmationM);
+        //angle = Math.PI * angle / 180;
+        //this.newBase = multiplyMatrices(this.oldBase, getRotationYMatrix(angle));
         ///                console.log('oldBase:', this.oldBase, 'newBase:', this.newBase);
     };
 
     this.rollLeft = function (angle) {
-        angle = 2 * Math.PI - (Math.PI * angle / 180);
-        this.newBase = multiplyMatrixs(this.oldBase, getRotationYMatrix(angle));
+        rad = angle / 180 * Math.PI;
+        console.log('angle, rad', angle, rad);
+        console.log('this.transofrmationM', this.transofrmationM);
+        this.transofrmationM = multiplyMatrices(getRotationYMatrix(rad), this.transofrmationM);
+        console.log('this.transofrmationM', this.transofrmationM);
+        //angle = 2 * Math.PI - (Math.PI * angle / 180);
+        //this.newBase = multiplyMatrices(this.oldBase, getRotationYMatrix(angle));
         ///                 console.log('oldBase:', this.oldBase, 'newBase:', this.newBase);
     };
 
     this.turnRight = function (angle) {
-        angle = Math.PI * angle / 180;
-        this.newBase = multiplyMatrixs(this.oldBase, getRotationXMatrix(angle));
+        rad = - angle / 180 * Math.PI;
+        console.log('angle, rad', angle, rad);
+        console.log('this.transofrmationM', this.transofrmationM);
+        this.transofrmationM = multiplyMatrices(getRotationZMatrix(rad), this.transofrmationM);
+        console.log('this.transofrmationM', this.transofrmationM);
+        //angle = Math.PI * angle / 180;
+        //this.newBase = multiplyMatrices(this.oldBase, getRotationXMatrix(angle));
         ///                   console.log('oldBase:', this.oldBase, 'newBase:', this.newBase);
     };
 
     this.turnLeft = function (angle) {
-        angle = 2 * Math.PI - (Math.PI * angle / 180);
-        this.newBase = multiplyMatrixs(this.oldBase, getRotationXMatrix(-angle));
+        rad = angle / 180 * Math.PI;
+        console.log('angle, rad', angle, rad);
+        console.log('this.transofrmationM', this.transofrmationM);
+        this.transofrmationM = multiplyMatrices(getRotationZMatrix(rad), this.transofrmationM);
+        console.log('this.transofrmationM', this.transofrmationM);
+        //angle = 2 * Math.PI - (Math.PI * angle / 180);
+        //this.newBase = multiplyMatrices(this.oldBase, getRotationXMatrix(-angle));
         ///                   console.log('oldBase:', this.oldBase, 'newBase:', this.newBase);
     };
 
     this.up = function (angle) {
-        angle = Math.PI * angle / 180;
-        this.newBase = multiplyMatrixs(this.oldBase, getRotationZMatrix(angle));
+        rad = angle / 180 * Math.PI;
+        console.log('angle, rad', angle, rad);
+        console.log('this.transofrmationM', this.transofrmationM);
+        this.transofrmationM = multiplyMatrices(getRotationXMatrix(rad), this.transofrmationM);
+        console.log('this.transofrmationM', this.transofrmationM);
+        //angle = Math.PI * angle / 180;
+        //this.newBase = multiplyMatrices(this.oldBase, getRotationZMatrix(angle));
         ///                     console.log('oldBase:', this.oldBase, 'newBase:', this.newBase);
     };
 
     this.down = function (angle) {
-        angle = 2 * Math.PI - (Math.PI * angle / 180);
-        this.newBase = multiplyMatrixs(this.oldBase, getRotationZMatrix(-angle));
+        rad = - angle / 180 * Math.PI;
+        console.log('angle, rad', angle, rad);
+        console.log('this.transofrmationM', this.transofrmationM);
+        this.transofrmationM = multiplyMatrices(getRotationXMatrix(rad), this.transofrmationM);
+        console.log('this.transofrmationM', this.transofrmationM);
+        //angle = 2 * Math.PI - (Math.PI * angle / 180);
+        //this.newBase = multiplyMatrices(this.oldBase, getRotationZMatrix(-angle));
         ///                     console.log('oldBase:', this.oldBase, 'newBase:', this.newBase);
     };
 
@@ -213,7 +251,7 @@ const Turtle = function (positions=[0, 0, 0], rotations=[0, 0, 0], color='green'
 
     this.setPosition = function (x, y, z) {
         [this.pos.x, this.pos.y, this.pos.z] = [x, y, z];
-        console.log('arrFromVec(this.pos)', arrFromVec(this.pos));
+        //console.log('arrFromVec(this.pos)', arrFromVec(this.pos));
         this.originPoint = [x, y, z];
     };
 
@@ -233,7 +271,7 @@ const Turtle = function (positions=[0, 0, 0], rotations=[0, 0, 0], color='green'
 
         console.log('endPos', endPos);
         [x1, y1, z1] = endPos;
-        console.log('[x1, y1, z1]', [x1, y1, z1]);
+        console.log('x1, y1, z1', x1, y1, z1);
 
         centerPos = getMiddlePoint(startPos, endPos);
         console.log('centerPos:',centerPos);
@@ -288,12 +326,12 @@ const Turtle = function (positions=[0, 0, 0], rotations=[0, 0, 0], color='green'
         // SPOČÍTÁ ROTACI V OSE Y, PODLE KVADRANTU BUĎ NECHÁ, NEBO ODEČTE OD 360 STUPŇŮ
         ///          console.log('dZ/Math.sqrt(dX**2+dZ**2)',dZ/Math.sqrt(dX**2+dZ**2));
         ///           console.log('Math.acos(dZ/Math.sqrt(dX**2+dZ**2))/Math.PI*180:',Math.acos(dZ/Math.sqrt(dX**2+dZ**2))/Math.PI*180);
-        rotY180 = Math.acos(dZ / Math.sqrt(dX**2 + dZ**2)) / Math.PI * 180;
+        rotY180 = ((dX**2 + dZ**2) != 0)? Math.acos(dZ / Math.sqrt(dX**2 + dZ**2)) / Math.PI * 180: 0;
         console.log('rotY180', rotY180);
         //console.log("test of tanges", Math.tan(dX/dZ)/Math.PI*180)
         rotY = (dX > 0)? rotY180: 360 - rotY180;
         console.log('rotY', rotY);
-        this.drawCylineder(centerPos, [rotX, rotY, 0], 15);
+        this.drawCylineder(centerPos, [rotX, rotY, 0], vectorLen);
 
         /*
         ZAKOMENTOVÁNO, LOGIKA OKOLU UKLÁDÁNÍ, transofrmationMACE JSEM NEZKOUMAL, TO BE DONE J.L.
@@ -359,18 +397,20 @@ const Turtle = function (positions=[0, 0, 0], rotations=[0, 0, 0], color='green'
         console.log('vector', vector);
 
         console.log('this.transofrmationM', this.transofrmationM);
-        this.transposeM = matrixInvert(this.transofrmationM);
-        console.log('this.transposeM', this.transposeM);
-        console.log();
+        this.inverseM = matrixInvert(this.transofrmationM);
+        console.log('this.inverseM', this.inverseM);
+        
+        //console.log('this.transofrmationM == matrixInvert(this.inverseM)', this.transofrmationM == matrixInvert(this.inverseM));
+        
 
-        console.log('this.transposeM, vector', this.transposeM, vector);
-        rotVector = multiplyMatrixs(this.transposeM, vector);
-        console.log('rotVector', rotVector);
+        rotatedV = multiplyMatrices(this.inverseM, vector);
+        console.log('rotatedV', rotatedV);
 
         //console.log(arrFromVec(this.pos));
 
-        newPos = addMatrices(this.pos.getArray(), rotVector);
-        //newPos = this.pos.getArray() + rotVector;
+        console.log('this.pos.getArray()', this.pos.getArray());
+        newPos = addMatrices(this.pos.getArray(), rotatedV);
+        //newPos = this.pos.getArray() + rotatedV;
         console.log('newPos', newPos);
 
         if (this.penIsDown) {
@@ -443,46 +483,6 @@ var getNextGen = function(sP){
     return sN;
 }
 */
-// MAIN
-/*
-* TODO : zmenit cary na cylindery
-*        porad nefunguje tak jak by melo, zrejme chyba prace s bázemi
-*        otestovat
-*        nedari se mi oddelit turn left/right, up/down, rollright/rollleft, dvojice delaji totez
-*/
-//var t = new Turtle();
-var STEP = 1;
-var t = new Turtle([0, 5, -10], [0, 0, 0]);
-//t.drawLine([-10,-10,-5]);
-t.forward(STEP);
-t.forward(STEP);
-t.forward(STEP);
-
-/*
-t.turnRight(90);
-t.forward(STEP);
-t.turnRight(90);
-t.forward(STEP);
-*/
-
-
-//// POMOCNÉ DEBUGGOVACÍ OBRAZCE, NA KTERÝCH JE DOBŘE VIDĚT JAK SETO CHOVÁ ////
-// t.setPosition(10, 0, 100);
-// console.log('t.pos', t.pos);    
-
-
-//t.drawCylineder([0,0,-10], [0,0,0], 5)
-//t.drawCylineder([0,0,-10], [30,0,0], 5)
-//t.drawLine([0,0,-10], [10,-5,-20]);
-//t.drawLine([0,0,-10], [-10,20,-25]);
-
-
-/*
-t.drawLine([1,0,0]);
-t.rollRight(45);
-t.drawLine([1,5,2]);
-*/
-
 /*
 const step_length = 0.03;
 const turn_angle = 25;
@@ -613,8 +613,121 @@ function drawPlant(str, angle) {
     }
 }
 
-//main
+// MAIN
+
+var STEP = 3;
+var t = new Turtle([0, -5, -30], [0, 180, 0]);
+
+t.forward(STEP);
+t.turnRight(45);
+t.forward(STEP);
+t.turnRight(15);
+t.forward(STEP);
+t.turnRight(30);
+t.forward(STEP);
+t.turnLeft(45);
+t.forward(STEP);
+t.turnLeft(15);
+t.forward(STEP);
+t.turnLeft(30);
+t.forward(STEP);
+
+
+t.forward(STEP);
+t.forward(STEP);
+t.turnRight(30);
+t.forward(STEP);
+t.turnRight(30);
+t.forward(STEP);
+t.turnRight(30);
+t.forward(STEP);
+t.turnRight(30);
+t.forward(STEP);
+t.turnRight(30);
+t.forward(STEP);
+t.turnRight(30);
+t.forward(STEP);
+t.turnRight(30);
+t.forward(STEP);
+t.turnRight(30);
+t.forward(STEP);
+t.turnRight(30);
+t.forward(STEP);
+t.turnRight(30);
+t.forward(STEP);
+t.turnRight(30);
+t.forward(STEP);
+t.turnRight(30);
+t.forward(STEP);
+
+t.up(60);
+t.forward(STEP);
+t.up(60);
+t.forward(STEP);
+t.up(60);
+t.forward(STEP);
+t.forward(STEP);
+t.forward(STEP);
+t.down(60);
+t.forward(STEP);
+t.down(60);
+t.forward(STEP);
+t.down(60);
+t.forward(STEP);
+
+t.forward(STEP);
+t.turnLeft(90);
+t.forward(STEP);
+t.rollLeft(90);
+t.turnLeft(90);
+t.forward(STEP);
+t.turnLeft(90);
+t.forward(STEP);
+
+t.up(30);
+t.rollRight(30);
+t.turnRight(30);
+t.forward(STEP);
+
+t.down(90);
+t.forward(STEP);
+t.turnRight(90);
+t.forward(STEP);
+
+// t.drawCylineder([0,0,-30], [0,0,0], 10)
+// t.drawLine([0, 5,-30], [0,-5,-30]);
+
+//t.drawCylineder([0,0,-10], [30,0,0], 5)
+//t.drawLine([0,0,-10], [10,-5,-20]);
+//t.drawLine([0,0,-10], [-10,20,-25]);
+
+//t.drawLine([-10,-10,-5]);
+
+/*
+t.turnRight(90);
+t.forward(STEP);
+t.turnRight(90);
+t.forward(STEP);
+*/
+
+
+//// POMOCNÉ DEBUGGOVACÍ OBRAZCE, NA KTERÝCH JE DOBŘE VIDĚT JAK SETO CHOVÁ ////
+// t.setPosition(10, 0, 100);
+// console.log('t.pos', t.pos);    
+
+
+
+
+/*
+t.drawLine([1,0,0]);
+t.rollRight(45);
+t.drawLine([1,5,2]);
+*/
+
+
+
 var plantStr = '';
 //              plantStr = getPlant1Prescription('F', 2);
 //              console.log('plant1 string:', plantStr);
 //drawPlant(plantStr,45);
+
