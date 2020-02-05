@@ -2,13 +2,18 @@
 
 ## Introduction
 
-implementation of python Turtle in 3D in JavaScript.
+implementation of Turtle (Turtle graphics) in 3D in JavaScript.
 
-The project uses A-frame.
+The project uses framework A-frame.
 
 The code is devided into HTML and JavaScript parts.
 
+## Trees are beautiful ...
+![Trees are beautiful](./pictures/TreesAreBeautiful.png)
+
 ## Versions log
+
++ v0.4.5 - preproduction version - polishing partially done, images added
 
 + v0.4.4 - subversion, turtle3D.js updated, not stable
 
@@ -45,3 +50,6 @@ The code is devided into HTML and JavaScript parts.
 + v0.0.2 - rename to turtle3D.html & turtle3D.js
 
 + v0.0.1 - turtle2d_aframe.html & turtle2d_aframe.js
+
+## ... trees are beautiful
+![Trees are beautiful](./pictures/treesAreBeautiful.png)
