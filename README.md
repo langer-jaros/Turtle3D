@@ -10,6 +10,8 @@ The code is devided into HTML and JavaScript parts.
 
 ## Versions log
 
++ v0.4.4 - subversion, turtle3D.js updated, not stable
+
 + v0.4.3 - turtle3D.js updated, phase of 3D tree/geometry generating
 
 + v0.4.2 - turtle3D.js updated, turtle works, turtle3D.html plane shifted

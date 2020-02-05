@@ -1,5 +1,5 @@
 /*
-VERZE 0.4.3 J.L.
+VERZE 0.4.4 J.L.
 */
 
 //https://allenpike.com/modeling-plants-with-l-systems/
@@ -167,6 +167,25 @@ const Turtle = function (positions=[0, 0, 0], rotations=[0, 0, 0], color='green'
     console.log('this.transofrmationM', this.transofrmationM);
     this.inverseM = matrixInvert(this.transofrmationM);
 
+    
+    this.turnLeft = function (angle) {
+        this.transofrmationM = multiplyMatrices(getRotationZMatrix(degToRad(angle)), this.transofrmationM);
+        console.log('this.transofrmationM', this.transofrmationM);
+    };
+    
+    this.turnRight = function (angle) {
+        this.transofrmationM = multiplyMatrices(getRotationZMatrix(degToRad(-angle)), this.transofrmationM);
+        console.log('this.transofrmationM', this.transofrmationM);
+    };
+    
+    this.pitchDown = function (angle) {
+        this.transofrmationM = multiplyMatrices(getRotationXMatrix(degToRad(angle)), this.transofrmationM);
+    };
+    
+    this.pitchUp = function (angle) {
+        this.transofrmationM = multiplyMatrices(getRotationXMatrix(degToRad(-angle)), this.transofrmationM);
+    };
+
     this.rollRight = function (angle) {
         this.transofrmationM = multiplyMatrices(getRotationYMatrix(degToRad(-angle)), this.transofrmationM);
     };
@@ -174,33 +193,15 @@ const Turtle = function (positions=[0, 0, 0], rotations=[0, 0, 0], color='green'
     this.rollLeft = function (angle) {
         this.transofrmationM = multiplyMatrices(getRotationYMatrix(degToRad(angle)), this.transofrmationM);
     };
-
-    this.turnRight = function (angle) {
-        this.transofrmationM = multiplyMatrices(getRotationZMatrix(degToRad(-angle)), this.transofrmationM);
-        console.log('this.transofrmationM', this.transofrmationM);
-    };
-
-    this.turnLeft = function (angle) {
-        this.transofrmationM = multiplyMatrices(getRotationZMatrix(degToRad(angle)), this.transofrmationM);
-        console.log('this.transofrmationM', this.transofrmationM);
-    };
-
-    this.pitchUp = function (angle) {
-        this.transofrmationM = multiplyMatrices(getRotationXMatrix(degToRad(angle)), this.transofrmationM);
-    };
-
-    this.pitchDown = function (angle) {
-        this.transofrmationM = multiplyMatrices(getRotationXMatrix(degToRad(-angle)), this.transofrmationM);
-    };
-
+    
     this.penUp = function () {
         this.penIsDown = false;
     };
-
+    
     this.penDown = function () {
         this.penIsDown = true;
     };
-
+    
     this.setPosition = function (position) {
         this.coordinates = position;
     };
@@ -477,18 +478,40 @@ var createObject = function (symbol, gens, rules, viewer, step, angle) {
 };
     
 // MAIN
-const STEP = 3;
+const STEP = 6;
 const TURN_ANGLE = 90;
 const START_POSITION = [0, -5, -30];
 const START_HEADING = [0, 180, 0];
 const COLOR = 'darkgreen'
 const START_SYMBOL = 'X';
 const GENERATIONS = 2;
-
 var t = new Turtle(START_POSITION, START_HEADING, COLOR);
 
+var stack = [];
+t.forward(STEP);
+stack.push([t.coordinates, t.transofrmationM])
+t.turnRight(45);
+t.forward(STEP);
+t.pitchUp(40);
+t.forward(STEP);
+/*/
+
+
+t.rollRight(40);
+t.pitchUp(40);
+t.forward(STEP);
+[coordinates, transofrmationM] = stack.pop();
+t.penUp();
+t.setPosition(coordinates);
+t.setHeading(transofrmationM);
+t.penDown();
+t.turnLeft(45);
+t.forward(STEP);
+/*/
+/*/
 createObject(START_SYMBOL, GENERATIONS, curve, drawPlant, STEP, TURN_ANGLE);
 //createObject(START_SYMBOL, GENERATIONS, hilbertCurve, drawPlant, STEP, TURN_ANGLE);
+/*/
 
 /*
 var plantStr = '';
