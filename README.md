@@ -13,6 +13,8 @@ The code is devided into HTML and JavaScript parts.
 
 ## Versions log
 
++ v1.0.0 - This is it
+
 + v0.4.5 - preproduction version - polishing partially done, images added
 
 + v0.4.4 - subversion, turtle3D.js updated, not stable

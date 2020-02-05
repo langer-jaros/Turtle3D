@@ -1,7 +1,7 @@
 /**
  * Turtle3D (Turtle graphics) implemented in JavaScript using framework A-frame.
  * 
- * Version 0.4.5
+ * Version 1.0.0
  * 
  * Inspiration: https://allenpike.com/modeling-plants-with-l-systems/
  */
@@ -64,7 +64,7 @@ function getUnitMatrix3D() {
 }
 
 /**
- * Retrieves a lengh of a given vector.
+ * Retrieves a length of a given vector.
  */
 function getVecLen(endPoint, startPoint=[0, 0, 0]) {
     [x0, y0, z0] = startPoint;
@@ -170,7 +170,7 @@ const Turtle = function (positions=[0, 0, 0], rotations=[0, 0, 0], color='#398D4
     };
 
    /**
-    * Calculates vector midpoints, angles, lenght and calls function drawCylinder.
+    * Calculates vector midpoints, angles, length and calls function drawCylinder.
     */
    this.drawLine = function (endPos, startPos=this.coordinates) {
         [x0, y0, z0] = startPos;
