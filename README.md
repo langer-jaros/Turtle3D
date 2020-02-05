@@ -13,7 +13,7 @@ The code is devided into HTML and JavaScript parts.
 
 ## Versions log
 
-+ v1.0.0 - This is it
++ v1.0.0 - Final version
 
 + v0.4.5 - preproduction version - polishing partially done, images added
 
